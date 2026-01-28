@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Switch System V2 - Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #1a2530;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius);
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--light);
+            font-size: 1.3rem;
+        }
+        
+        .card-title i {
+            margin-right: 12px;
+            font-size: 1.5rem;
+        }
+        
+        .status-card {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
+        }
+        
+        .sensor-card {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
+        }
+        
+        .control-card {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(142, 68, 173, 0.2));
+        }
+        
+        .calibration-card {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(230, 126, 34, 0.2));
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .status-online {
+            background: var(--success);
+            color: white;
+        }
+        
+        .status-offline {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .status-switching {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .sensor-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .sensor-item:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .sensor-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .sensor-unit {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .sensor-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        .voltage-value {
+            color: #3498db;
+        }
+        
+        .current-value {
+            color: #2ecc71;
+        }
+        
+        .power-value {
+            color: #e74c3c;
+        }
+        
+        .energy-value {
+            color: #f39c12;
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: scale(1.03);
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .toggle-label {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        .calibration-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calibration-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .calibration-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .calibration-value {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            max-width: 350px;
+            box-shadow: var(--shadow);
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: var(--success);
+        }
+        
+        .notification.error {
+            background: var(--danger);
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+        }
+        
+        .notification.info {
+            background: var(--secondary);
+        }
+        
+        .gauge {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .gauge-circle {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .gauge-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+        
+        .gauge-label {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .sensor-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gauge {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .gauge-value {
+                font-size: 2rem;
+            }
+        }
+        
+        .chart-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .chart-title {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--light);
+        }
+        
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-bolt"></i> Power Switch System V2</h1>
+            <p>Control Panel & Monitoring System dengan Kalibrasi Permanen</p>
+            <div id="connectionStatus" class="status-badge status-offline">Disconnected</div>
+        </div>
+        
+        <div class="grid">
+            <!-- Status Card -->
+            <div class="card status-card">
+                <div class="card-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h3>System Status</h3>
+                </div>
+                <div id="systemStatus" class="status-badge status-offline">OFFLINE</div>
+                <div class="toggle-container">
+                    <div class="toggle-label">Auto Mode</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-container">
+                    <div class="toggle-label">Maintenance Mode</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="maintenanceToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="sensor-item">
+                    <div class="sensor-label">WiFi Signal</div>
+                    <div id="wifiSignal" class="sensor-value voltage-value">- dBm</div>
+                </div>
+            </div>
+            
+            <!-- Sensor Readings Card -->
+            <div class="card sensor-card">
+                <div class="card-title">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Sensor Readings</h3>
+                </div>
+                <div class="sensor-grid">
+                    <div class="sensor-item">
+                        <div class="sensor-label">Voltage 1</div>
+                        <div id="voltage1" class="sensor-value voltage-value">0.0 V</div>
+                        <div class="sensor-unit">AC Voltage</div>
+                    </div>
+                    <div class="sensor-item">
+                        <div class="sensor-label">Voltage 2</div>
+                        <div id="voltage2" class="sensor-value voltage-value">0.0 V</div>
+                        <div class="sensor-unit">AC Voltage</div>
+                    </div>
+                    <div class="sensor-item">
+                        <div class="sensor-label">Current</div>
+                        <div id="current" class="sensor-value current-value">0.00 A</div>
+                        <div class="sensor-unit">AC Current</div>
+                    </div>
+                    <div class="sensor-item">
+                        <div class="sensor-label">Power</div>
+                        <div id="power" class="sensor-value power-value">0.0 W</div>
+                        <div class="sensor-unit">Active Power</div>
+                    </div>
+                    <div class="sensor-item">
+                        <div class="sensor-label">Energy</div>
+                        <div id="energy" class="sensor-value energy-value">0.000 kWh</div>
+                        <div class="sensor-unit">Total Consumption</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Control Card -->
+            <div class="card control-card">
+                <div class="card-title">
+                    <i class="fas fa-sliders-h"></i>
+                    <h3>Power Control</h3>
+                </div>
+                <button class="btn btn-success" id="source1Btn">
+                    <i class="fas fa-plug"></i> Aktifkan Sumber 1
+                </button>
+                <button class="btn btn-success" id="source2Btn">
+                    <i class="fas fa-plug"></i> Aktifkan Sumber 2
+                </button>
+                <button class="btn btn-danger" id="shutdownBtn">
+                    <i class="fas fa-power-off"></i> Matikan System
+                </button>
+                <button class="btn btn-primary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+                <div class="sensor-item" style="margin-top: 15px;">
+                    <div class="sensor-label">Active Source</div>
+                    <div id="activeSource" class="sensor-value voltage-value">NONE</div>
+                </div>
+            </div>
+            
+            <!-- Calibration Card -->
+            <div class="card calibration-card">
+                <div class="card-title">
+                    <i class="fas fa-wrench"></i>
+                    <h3>Calibration Status</h3>
+                </div>
+                <div class="calibration-item">
+                    <div class="calibration-info">
+                        <div class="calibration-label">Kalibrasi V1</div>
+                        <div class="calibration-value" id="calibV1">Loading...</div>
+                    </div>
+                    <button class="refresh-btn" onclick="calibrateV1()">Kalibrasi</button>
+                </div>
+                <div class="calibration-item">
+                    <div class="calibration-info">
+                        <div class="calibration-label">Kalibrasi V2</div>
+                        <div class="calibration-value" id="calibV2">Loading...</div>
+                    </div>
+                    <button class="refresh-btn" onclick="calibrateV2()">Kalibrasi</button>
+                </div>
+                <div class="calibration-item">
+                    <div class="calibration-info">
+                        <div class="calibration-label">Zero Point Status</div>
+                        <div class="calibration-value" id="zeroStatus">Loading...</div>
+                    </div>
+                    <button class="refresh-btn" onclick="resetZeroPoints()">Reset</button>
+                </div>
+                <button class="btn btn-warning" id="autoCalibrateBtn">
+                    <i class="fas fa-robot"></i> Auto Kalibrasi
+                </button>
+                <button class="btn btn-primary" id="saveCalibrationBtn">
+                    <i class="fas fa-save"></i> Simpan ke Flash
+                </button>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-title">
+                <i class="fas fa-chart-area"></i>
+                <h3>Voltage & Power Trend</h3>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Real-time Monitoring (Last 10 readings)</div>
+                <canvas id="voltageChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Power Switch System V2 | Telegram Calibration System | © 2024 All Rights Reserved</p>
+            <p>System Uptime: <span id="uptime">0h 0m 0s</span> | Last Update: <span id="lastUpdate">Never</span></p>
+        </div>
+    </div>
+    
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Configuration
+        const CONFIG = {
+            blynk: {
+                server: "blynk.cloud",
+                token: "9V0U-QtNPYRO63Q-oR26CalZ1CB7fErt",
+                virtualPins: {
+                    voltage1: "V0",
+                    voltage2: "V2",
+                    current: "V5",
+                    power: "V6",
+                    energy: "V7",
+                    source1: "V8",
+                    source2: "V9",
+                    autoMode: "V1",
+                    wifiSignal: "V11"
+                }
+            },
+            updateInterval: 3000,
+            maxHistory: 10
+        };
+        
+        // State variables
+        let systemState = {
+            voltage1: 0,
+            voltage2: 0,
+            current: 0,
+            power: 0,
+            energy: 0,
+            autoMode: false,
+            maintenanceMode: false,
+            activeSource: 0,
+            wifiSignal: 0,
+            calibration: {
+                v1: "Unknown",
+                v2: "Unknown",
+                zero: "Unknown"
+            },
+            isConnected: false,
+            uptime: 0,
+            lastUpdate: new Date(),
+            voltageHistory: [],
+            powerHistory: [],
+            timeHistory: []
+        };
+        
+        // Chart instances
+        let voltageChart = null;
+        let powerChart = null;
+        
+        // DOM Elements
+        const elements = {
+            voltage1: document.getElementById('voltage1'),
+            voltage2: document.getElementById('voltage2'),
+            current: document.getElementById('current'),
+            power: document.getElementById('power'),
+            energy: document.getElementById('energy'),
+            systemStatus: document.getElementById('systemStatus'),
+            connectionStatus: document.getElementById('connectionStatus'),
+            wifiSignal: document.getElementById('wifiSignal'),
+            activeSource: document.getElementById('activeSource'),
+            autoModeToggle: document.getElementById('autoModeToggle'),
+            maintenanceToggle: document.getElementById('maintenanceToggle'),
+            source1Btn: document.getElementById('source1Btn'),
+            source2Btn: document.getElementById('source2Btn'),
+            shutdownBtn: document.getElementById('shutdownBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            autoCalibrateBtn: document.getElementById('autoCalibrateBtn'),
+            saveCalibrationBtn: document.getElementById('saveCalibrationBtn'),
+            calibV1: document.getElementById('calibV1'),
+            calibV2: document.getElementById('calibV2'),
+            zeroStatus: document.getElementById('zeroStatus'),
+            uptime: document.getElementById('uptime'),
+            lastUpdate: document.getElementById('lastUpdate')
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            setupEventListeners();
+            loadSystemState();
+            startDataPolling();
+            updateUptimeCounter();
+            
+            // Initial notification
+            showNotification('System initialized. Connecting to Blynk...', 'info');
+        });
+        
+        // Initialize charts
+        function initializeCharts() {
+            const voltageCtx = document.getElementById('voltageChart').getContext('2d');
+            
+            voltageChart = new Chart(voltageCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Voltage 1 (V)',
+                            data: [],
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Voltage 2 (V)',
+                            data: [],
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Power (W)',
+                            data: [],
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#ccc'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#ccc'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Voltage (V)',
+                                color: '#ccc'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: {
+                                color: '#ccc'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Power (W)',
+                                color: '#ccc'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ccc'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Control buttons
+            elements.source1Btn.addEventListener('click', () => switchPowerSource(1));
+            elements.source2Btn.addEventListener('click', () => switchPowerSource(2));
+            elements.shutdownBtn.addEventListener('click', shutdownSystem);
+            elements.refreshBtn.addEventListener('click', fetchSystemData);
+            elements.autoCalibrateBtn.addEventListener('click', autoCalibrate);
+            elements.saveCalibrationBtn.addEventListener('click', saveCalibration);
+            
+            // Toggle switches
+            elements.autoModeToggle.addEventListener('change', toggleAutoMode);
+            elements.maintenanceToggle.addEventListener('change', toggleMaintenanceMode);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey) {
+                    switch(e.key) {
+                        case '1': switchPowerSource(1); break;
+                        case '2': switchPowerSource(2); break;
+                        case '0': shutdownSystem(); break;
+                        case 'r': fetchSystemData(); break;
+                    }
+                }
+            });
+        }
+        
+        // Load initial system state
+        function loadSystemState() {
+            const savedState = localStorage.getItem('powerSwitchState');
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    systemState = { ...systemState, ...parsed };
+                    updateUI();
+                } catch (e) {
+                    console.error('Failed to load saved state:', e);
+                }
+            }
+        }
+        
+        // Save system state
+        function saveSystemState() {
+            localStorage.setItem('powerSwitchState', JSON.stringify(systemState));
+        }
+        
+        // Start polling for data
+        function startDataPolling() {
+            fetchSystemData();
+            setInterval(fetchSystemData, CONFIG.updateInterval);
+        }
+        
+        // Fetch system data from Blynk
+        async function fetchSystemData() {
+            try {
+                // Simulate API calls - in real implementation, replace with actual Blynk API
+                const mockData = getMockData();
+                
+                // Update system state
+                systemState.voltage1 = mockData.voltage1;
+                systemState.voltage2 = mockData.voltage2;
+                systemState.current = mockData.current;
+                systemState.power = mockData.power;
+                systemState.energy = mockData.energy;
+                systemState.autoMode = mockData.autoMode;
+                systemState.maintenanceMode = mockData.maintenanceMode;
+                systemState.activeSource = mockData.activeSource;
+                systemState.wifiSignal = mockData.wifiSignal;
+                systemState.calibration = mockData.calibration;
+                systemState.isConnected = true;
+                systemState.lastUpdate = new Date();
+                
+                // Update history
+                updateHistory();
+                
+                // Update UI
+                updateUI();
+                
+                // Save state
+                saveSystemState();
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                systemState.isConnected = false;
+                updateUI();
+                showNotification('Failed to fetch data from system', 'error');
+            }
+        }
+        
+        // Update data history for charts
+        function updateHistory() {
+            const now = new Date();
+            const timeLabel = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            systemState.voltageHistory.push(systemState.voltage1);
+            systemState.powerHistory.push(systemState.power);
+            systemState.timeHistory.push(timeLabel);
+            
+            // Keep only last N readings
+            if (systemState.voltageHistory.length > CONFIG.maxHistory) {
+                systemState.voltageHistory.shift();
+                systemState.powerHistory.shift();
+                systemState.timeHistory.shift();
+            }
+            
+            // Update chart
+            if (voltageChart) {
+                voltageChart.data.labels = systemState.timeHistory;
+                voltageChart.data.datasets[0].data = systemState.voltageHistory;
+                voltageChart.data.datasets[1].data = systemState.voltageHistory.map(v => systemState.voltage2);
+                voltageChart.data.datasets[2].data = systemState.powerHistory;
+                voltageChart.update('none');
+            }
+        }
+        
+        // Update UI with current state
+        function updateUI() {
+            // Update sensor readings
+            elements.voltage1.textContent = `${systemState.voltage1.toFixed(1)} V`;
+            elements.voltage2.textContent = `${systemState.voltage2.toFixed(1)} V`;
+            elements.current.textContent = `${systemState.current.toFixed(2)} A`;
+            elements.power.textContent = `${systemState.power.toFixed(1)} W`;
+            elements.energy.textContent = `${systemState.energy.toFixed(3)} kWh`;
+            
+            // Update status
+            elements.systemStatus.textContent = systemState.isConnected ? 'ONLINE' : 'OFFLINE';
+            elements.systemStatus.className = `status-badge ${systemState.isConnected ? 'status-online' : 'status-offline'}`;
+            
+            elements.connectionStatus.textContent = systemState.isConnected ? 'Connected' : 'Disconnected';
+            elements.connectionStatus.className = `status-badge ${systemState.isConnected ? 'status-online' : 'status-offline'}`;
+            
+            // Update WiFi signal
+            elements.wifiSignal.textContent = `${systemState.wifiSignal} dBm`;
+            elements.wifiSignal.style.color = getSignalColor(systemState.wifiSignal);
+            
+            // Update active source
+            let sourceText = 'NONE';
+            let sourceColor = '#ccc';
+            if (systemState.activeSource === 1) {
+                sourceText = 'SOURCE 1';
+                sourceColor = '#3498db';
+            } else if (systemState.activeSource === 2) {
+                sourceText = 'SOURCE 2';
+                sourceColor = '#2ecc71';
+            }
+            elements.activeSource.textContent = sourceText;
+            elements.activeSource.style.color = sourceColor;
+            
+            // Update toggle switches
+            elements.autoModeToggle.checked = systemState.autoMode;
+            elements.maintenanceToggle.checked = systemState.maintenanceMode;
+            
+            // Update calibration status
+            elements.calibV1.textContent = systemState.calibration.v1;
+            elements.calibV2.textContent = systemState.calibration.v2;
+            elements.zeroStatus.textContent = systemState.calibration.zero;
+            
+            // Update last update time
+            elements.lastUpdate.textContent = systemState.lastUpdate.toLocaleTimeString();
+            
+            // Update button states
+            updateButtonStates();
+        }
+        
+        // Update button enabled/disabled states
+        function updateButtonStates() {
+            const isConnected = systemState.isConnected;
+            const isMaintenance = systemState.maintenanceMode;
+            const isAutoMode = systemState.autoMode;
+            
+            elements.source1Btn.disabled = !isConnected || isMaintenance || isAutoMode;
+            elements.source2Btn.disabled = !isConnected || isMaintenance || isAutoMode;
+            elements.shutdownBtn.disabled = !isConnected || isAutoMode;
+            elements.autoCalibrateBtn.disabled = !isConnected;
+            elements.saveCalibrationBtn.disabled = !isConnected;
+            
+            elements.autoModeToggle.disabled = !isConnected;
+            elements.maintenanceToggle.disabled = !isConnected;
+        }
+        
+        // Switch power source
+        function switchPowerSource(source) {
+            if (systemState.maintenanceMode) {
+                showNotification('Cannot switch sources in maintenance mode', 'warning');
+                return;
+            }
+            
+            if (systemState.autoMode) {
+                showNotification('Cannot manually switch in auto mode', 'warning');
+                return;
+            }
+            
+            const sourceName = source === 1 ? 'Source 1' : 'Source 2';
+            
+            // In real implementation, send command to Blynk
+            showNotification(`Switching to ${sourceName}...`, 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                systemState.activeSource = source;
+                updateUI();
+                showNotification(`${sourceName} activated successfully`, 'success');
+            }, 1000);
+        }
+        
+        // Shutdown system
+        function shutdownSystem() {
+            if (systemState.autoMode) {
+                showNotification('Cannot shutdown in auto mode', 'warning');
+                return;
+            }
+            
+            // In real implementation, send command to Blynk
+            showNotification('Shutting down system...', 'warning');
+            
+            // Simulate API call
+            setTimeout(() => {
+                systemState.activeSource = 0;
+                updateUI();
+                showNotification('System shutdown complete', 'success');
+            }, 1000);
+        }
+        
+        // Toggle auto mode
+        function toggleAutoMode() {
+            const newMode = elements.autoModeToggle.checked;
+            
+            // In real implementation, send command to Blynk
+            showNotification(`${newMode ? 'Enabling' : 'Disabling'} auto mode...`, 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                systemState.autoMode = newMode;
+                updateUI();
+                showNotification(`Auto mode ${newMode ? 'enabled' : 'disabled'}`, 'success');
+            }, 500);
+        }
+        
+        // Toggle maintenance mode
+        function toggleMaintenanceMode() {
+            const newMode = elements.maintenanceToggle.checked;
+            
+            // In real implementation, send command to Blynk
+            showNotification(`${newMode ? 'Enabling' : 'Disabling'} maintenance mode...`, 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                systemState.maintenanceMode = newMode;
+                updateUI();
+                showNotification(`Maintenance mode ${newMode ? 'enabled' : 'disabled'}`, 'success');
+                
+                // If enabling maintenance mode, shutdown system
+                if (newMode && systemState.activeSource !== 0) {
+                    setTimeout(() => {
+                        systemState.activeSource = 0;
+                        updateUI();
+                        showNotification('System shutdown due to maintenance mode', 'info');
+                    }, 1000);
+                }
+            }, 500);
+        }
+        
+        // Auto calibrate
+        function autoCalibrate() {
+            showNotification('Starting auto calibration... This may take 15 seconds.', 'info');
+            
+            // Simulate calibration process
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                showNotification(`Calibration in progress: ${progress}%`, 'info');
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Update calibration status
+                    systemState.calibration = {
+                        v1: 'Calibrated (Zero: 2045)',
+                        v2: 'Calibrated (Zero: 2043)',
+                        zero: 'All zero points calibrated'
+                    };
+                    
+                    updateUI();
+                    showNotification('Auto calibration complete!', 'success');
+                }
+            }, 500);
+        }
+        
+        // Calibrate V1
+        function calibrateV1() {
+            const voltage = prompt('Enter actual voltage for Source 1 (e.g., 220.5):', '220.0');
+            if (voltage && !isNaN(parseFloat(voltage))) {
+                showNotification(`Calibrating Source 1 with ${voltage}V...`, 'info');
+                
+                // Simulate calibration
+                setTimeout(() => {
+                    systemState.calibration.v1 = `Calibrated (${voltage}V)`;
+                    updateUI();
+                    showNotification('Source 1 calibration complete!', 'success');
+                }, 2000);
+            }
+        }
+        
+        // Calibrate V2
+        function calibrateV2() {
+            const voltage = prompt('Enter actual voltage for Source 2 (e.g., 220.5):', '220.0');
+            if (voltage && !isNaN(parseFloat(voltage))) {
+                showNotification(`Calibrating Source 2 with ${voltage}V...`, 'info');
+                
+                // Simulate calibration
+                setTimeout(() => {
+                    systemState.calibration.v2 = `Calibrated (${voltage}V)`;
+                    updateUI();
+                    showNotification('Source 2 calibration complete!', 'success');
+                }, 2000);
+            }
+        }
+        
+        // Reset zero points
+        function resetZeroPoints() {
+            if (confirm('Are you sure you want to reset all zero points? This will require recalibration.')) {
+                showNotification('Resetting zero points...', 'warning');
+                
+                // Simulate reset
+                setTimeout(() => {
+                    systemState.calibration.zero = 'Zero points reset - Needs calibration';
+                    updateUI();
+                    showNotification('Zero points reset complete', 'success');
+                }, 1500);
+            }
+        }
+        
+        // Save calibration to flash
+        function saveCalibration() {
+            showNotification('Saving calibration to flash memory...', 'info');
+            
+            // Simulate save
+            setTimeout(() => {
+                showNotification('Calibration saved permanently to flash!', 'success');
+            }, 1000);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            // Remove after delay
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // Update uptime counter
+        function updateUptimeCounter() {
+            setInterval(() => {
+                systemState.uptime++;
+                const hours = Math.floor(systemState.uptime / 3600);
+                const minutes = Math.floor((systemState.uptime % 3600) / 60);
+                const seconds = systemState.uptime % 60;
+                elements.uptime.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            }, 1000);
+        }
+        
+        // Get signal color based on dBm
+        function getSignalColor(dBm) {
+            if (dBm >= -50) return '#2ecc71'; // Excellent
+            if (dBm >= -60) return '#3498db'; // Good
+            if (dBm >= -70) return '#f39c12'; // Fair
+            return '#e74c3c'; // Poor
+        }
+        
+        // Mock data generator (replace with actual Blynk API calls)
+        function getMockData() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            
+            // Simulate realistic voltage fluctuations
+            const baseVoltage1 = 220 + Math.sin(seconds / 10) * 5;
+            const baseVoltage2 = 220 + Math.cos(seconds / 10) * 5;
+            
+            return {
+                voltage1: baseVoltage1 + (Math.random() * 2 - 1),
+                voltage2: baseVoltage2 + (Math.random() * 2 - 1),
+                current: 1.5 + Math.sin(seconds / 5) * 0.5,
+                power: (220 + Math.random() * 20) * (1.5 + Math.sin(seconds / 5) * 0.5),
+                energy: 12.345 + (seconds / 3600) * 0.1,
+                autoMode: Math.random() > 0.5,
+                maintenanceMode: false,
+                activeSource: Math.floor(Math.random() * 3),
+                wifiSignal: -65 + Math.floor(Math.random() * 15),
+                calibration: {
+                    v1: 'Calibrated (Factor: 1.002)',
+                    v2: 'Calibrated (Factor: 0.998)',
+                    zero: 'Stable (Last: 2h ago)'
+                }
+            };
+        }
+        
+        // Export system data
+        function exportSystemData() {
+            const dataStr = JSON.stringify(systemState, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `power-switch-backup-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('System data exported successfully!', 'success');
+        }
+        
+        // Import system data
+        function importSystemData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        systemState = { ...systemState, ...importedData };
+                        updateUI();
+                        saveSystemState();
+                        showNotification('System data imported successfully!', 'success');
+                    } catch (error) {
+                        showNotification('Error importing data: Invalid format', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        // Add keyboard shortcuts info
+        console.log(`
+        ===========================================
+        POWER SWITCH SYSTEM V2 - WEB INTERFACE
+        ===========================================
+        Keyboard Shortcuts:
+        - Ctrl + 1: Switch to Source 1
+        - Ctrl + 2: Switch to Source 2
+        - Ctrl + 0: Shutdown System
+        - Ctrl + R: Refresh Data
+        ===========================================
+        `);
+    </script>
+</body>
+</html>
