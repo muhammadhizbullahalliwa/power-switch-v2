@@ -1,388 +1,2826 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark-mode">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Switch System V2 - Control Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>⚡ POWER SWITCH V2 | Cybernetic Control Panel</title>
+    <!-- Meta Tags -->
+    <meta name="description" content="Advanced Power Switching System with AI-Powered Optimalization">
+    <meta name="author" content="mh.alliwa">
+    <meta name="theme-color" content="#00f3ff">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Three.js for 3D Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP for Advanced Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
     <style>
+        /* ===== CYBERPUNK DESIGN SYSTEM ===== */
         :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --dark: #1a2530;
-            --light: #ecf0f1;
-            --gray: #95a5a6;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
-            --transition: all 0.3s ease;
+            /* Cyberpunk Color Palette */
+            --cyber-blue: #00f3ff;
+            --cyber-pink: #ff00ff;
+            --cyber-purple: #9d00ff;
+            --cyber-green: #00ff9d;
+            --cyber-yellow: #ffd700;
+            --cyber-red: #ff0055;
+            
+            /* Glass Morphism Colors */
+            --glass-dark: rgba(10, 15, 30, 0.7);
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-glow: rgba(0, 243, 255, 0.1);
+            
+            /* Background Layers */
+            --bg-deep: #0a0f1e;
+            --bg-mid: #111827;
+            --bg-surface: #1a1f2e;
+            
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-glow: #00f3ff;
+            --text-muted: #4a5568;
+            
+            /* Effects */
+            --glow-primary: 0 0 20px var(--cyber-blue);
+            --glow-secondary: 0 0 20px var(--cyber-pink);
+            --glow-success: 0 0 20px var(--cyber-green);
+            --glow-danger: 0 0 20px var(--cyber-red);
+            
+            /* Animations */
+            --pulse: pulse 2s infinite;
+            --scan: scan 3s linear infinite;
+            --float: float 6s ease-in-out infinite;
+            --neon: neon 1.5s ease-in-out infinite alternate;
+            
+            /* Shadows */
+            --shadow-deep: 0 10px 40px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px rgba(0, 243, 255, 0.3);
+            
+            /* Gradients */
+            --gradient-cyber: linear-gradient(135deg, var(--cyber-blue) 0%, var(--cyber-purple) 50%, var(--cyber-pink) 100%);
+            --gradient-dark: linear-gradient(135deg, var(--bg-deep) 0%, #0f172a 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(0, 243, 255, 0.1) 0%, rgba(157, 0, 255, 0.1) 100%);
+            
+            /* Typography */
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
         
+        /* ===== BASE RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg-deep);
+            overflow-x: hidden;
         }
         
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: var(--light);
+            font-family: var(--font-body);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.6;
             min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(45deg, #3498db, #2ecc71);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: var(--gray);
-            font-size: 1.1rem;
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius);
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: var(--transition);
             position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* ===== CYBERPUNK BACKGROUND EFFECTS ===== */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .cyber-scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 243, 255, 0.03) 50%
+            );
+            background-size: 100% 4px;
+            z-index: -1;
+            pointer-events: none;
+            animation: var(--scan);
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(4px); }
+        }
+        
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-cyber);
+            filter: blur(5px);
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            color: var(--cyber-blue);
+            text-shadow: var(--glow-primary);
+            margin-bottom: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .cyber-text {
+            font-family: var(--font-mono);
+            color: var(--cyber-blue);
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch-text::before {
+            color: var(--cyber-pink);
+            animation: glitch-1 0.3s infinite;
+        }
+        
+        .glitch-text::after {
+            color: var(--cyber-blue);
+            animation: glitch-2 0.3s infinite;
+        }
+        
+        @keyframes glitch-1 {
+            0% { clip: rect(24px, 550px, 90px, 0); }
+            5% { clip: rect(85px, 550px, 140px, 0); }
+            10% { clip: rect(66px, 550px, 115px, 0); }
+            15% { clip: rect(91px, 550px, 100px, 0); }
+            100% { clip: rect(14px, 550px, 99px, 0); }
+        }
+        
+        @keyframes glitch-2 {
+            0% { clip: rect(85px, 550px, 140px, 0); }
+            5% { clip: rect(66px, 550px, 115px, 0); }
+            10% { clip: rect(91px, 550px, 100px, 0); }
+            15% { clip: rect(14px, 550px, 99px, 0); }
+            100% { clip: rect(24px, 550px, 90px, 0); }
+        }
+        
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* ===== HEADER ===== */
+        .cyber-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 15, 30, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            padding: 1.5rem 0;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-glow {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-cyber);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: var(--glow-primary);
+            animation: var(--neon);
+            position: relative;
+        }
+        
+        .logo-glow::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-cyber);
+            border-radius: 17px;
+            z-index: -1;
+            filter: blur(10px);
+        }
+        
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+        
+        .logo-subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--cyber-blue);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        
+        /* ===== NAVIGATION ===== */
+        .cyber-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-item {
+            position: relative;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-family: var(--font-display);
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-radius: 10px;
             overflow: hidden;
         }
         
-        .card:hover {
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-cyber);
+            opacity: 0.1;
+            transition: left 0.3s ease;
+        }
+        
+        .nav-item:hover::before {
+            left: 0;
+        }
+        
+        .nav-item:hover {
+            color: var(--cyber-blue);
+            text-shadow: var(--glow-primary);
+        }
+        
+        .nav-item.active {
+            color: var(--cyber-blue);
+            background: var(--glass-glow);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: var(--glow-primary);
+        }
+        
+        .nav-item.active::after {
+            content: '▶';
+            position: absolute;
+            right: 10px;
+            color: var(--cyber-blue);
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* ===== CONNECTION STATUS ===== */
+        .connection-panel {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--glass-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-orb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--cyber-red);
+            box-shadow: 0 0 15px currentColor;
+            animation: var(--pulse);
+        }
+        
+        .status-orb.connected {
+            background: var(--cyber-green);
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7);
+            }
+            70% { 
+                box-shadow: 0 0 0 10px rgba(0, 255, 157, 0);
+            }
+        }
+        
+        .status-text {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            padding-top: 140px;
+            min-height: calc(100vh - 300px);
+        }
+        
+        /* ===== DASHBOARD GRID ===== */
+        .cyber-grid-system {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        /* ===== GLASS CARDS ===== */
+        .cyber-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-cyber);
+        }
+        
+        .cyber-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--cyber-blue);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
         }
         
         .card-title {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            color: var(--light);
-            font-size: 1.3rem;
+            gap: 1rem;
         }
         
-        .card-title i {
-            margin-right: 12px;
-            font-size: 1.5rem;
-        }
-        
-        .status-card {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
-        }
-        
-        .sensor-card {
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
-        }
-        
-        .control-card {
-            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(142, 68, 173, 0.2));
-        }
-        
-        .calibration-card {
-            background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(230, 126, 34, 0.2));
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-        
-        .status-online {
-            background: var(--success);
-            color: white;
-        }
-        
-        .status-offline {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .status-switching {
-            background: var(--warning);
-            color: white;
-        }
-        
-        .sensor-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-        
-        .sensor-item {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            transition: var(--transition);
-        }
-        
-        .sensor-item:hover {
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        .sensor-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 10px 0;
-        }
-        
-        .sensor-unit {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .sensor-label {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-        
-        .voltage-value {
-            color: #3498db;
-        }
-        
-        .current-value {
-            color: #2ecc71;
-        }
-        
-        .power-value {
-            color: #e74c3c;
-        }
-        
-        .energy-value {
-            color: #f39c12;
-        }
-        
-        .btn {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-glass);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            font-size: 1.5rem;
+            color: var(--cyber-blue);
+        }
+        
+        /* ===== SENSOR DISPLAYS ===== */
+        .sensor-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .sensor-node {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.05) 0%, rgba(157, 0, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sensor-node::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-bottom: 10px;
+            height: 100%;
+            background: var(--gradient-cyber);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
         
-        .btn:hover {
-            transform: scale(1.03);
+        .sensor-node:hover {
+            transform: translateY(-3px);
+            border-color: var(--cyber-blue);
+            box-shadow: var(--glow-primary);
         }
         
-        .btn:active {
-            transform: scale(0.98);
+        .sensor-node:hover::before {
+            opacity: 0.1;
         }
         
-        .btn-primary {
-            background: var(--secondary);
-            color: white;
+        .sensor-value {
+            font-family: var(--font-mono);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--cyber-blue);
+            margin: 0.5rem 0;
+            text-shadow: var(--glow-primary);
         }
         
-        .btn-success {
-            background: var(--success);
-            color: white;
+        .sensor-label {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
-        .btn-danger {
-            background: var(--danger);
-            color: white;
+        .sensor-status {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--cyber-green);
+            display: inline-block;
+            margin-top: 0.5rem;
         }
         
-        .btn-warning {
-            background: var(--warning);
-            color: white;
+        /* ===== CONTROL PANEL ===== */
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
         }
         
-        .toggle-container {
+        .cyber-button {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.1) 0%, rgba(157, 0, 255, 0.1) 100%);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: var(--text-primary);
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-cyber);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        
+        .cyber-button:hover::before {
+            left: 0;
+        }
+        
+        .cyber-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary);
+            border-color: var(--cyber-blue);
+        }
+        
+        .cyber-button.active {
+            background: var(--gradient-cyber);
+            box-shadow: var(--glow-primary);
+        }
+        
+        .cyber-button.danger {
+            background: linear-gradient(135deg, rgba(255, 0, 85, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+            border-color: rgba(255, 0, 85, 0.3);
+        }
+        
+        .cyber-button.danger:hover {
+            box-shadow: var(--glow-danger);
+            border-color: var(--cyber-red);
+        }
+        
+        .button-icon {
+            font-size: 2.5rem;
+        }
+        
+        /* ===== TOGGLE SWITCHES ===== */
+        .toggle-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .toggle-unit {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            padding: 1.5rem;
+            background: var(--glass-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            transition: all 0.3s ease;
         }
         
-        .toggle-label {
-            font-size: 1rem;
-            font-weight: 500;
+        .toggle-unit:hover {
+            border-color: var(--cyber-blue);
+            box-shadow: var(--glow-primary);
         }
         
-        .toggle-switch {
+        .toggle-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .toggle-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-glass);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--cyber-blue);
+        }
+        
+        .toggle-text h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .toggle-text p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Cyber Toggle Switch */
+        .cyber-toggle {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 30px;
+            width: 80px;
+            height: 40px;
         }
         
-        .toggle-switch input {
+        .cyber-toggle input {
             opacity: 0;
             width: 0;
             height: 0;
         }
         
-        .slider {
+        .cyber-slider {
             position: absolute;
             cursor: pointer;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
             transition: .4s;
-            border-radius: 34px;
+            border-radius: 40px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
         }
         
-        .slider:before {
+        .cyber-slider::before {
             position: absolute;
             content: "";
-            height: 22px;
-            width: 22px;
+            height: 30px;
+            width: 30px;
             left: 4px;
-            bottom: 4px;
-            background-color: white;
+            bottom: 3px;
+            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
             transition: .4s;
             border-radius: 50%;
         }
         
-        input:checked + .slider {
-            background-color: var(--success);
+        input:checked + .cyber-slider {
+            background: linear-gradient(135deg, var(--cyber-blue) 0%, var(--cyber-purple) 100%);
+            box-shadow: var(--glow-primary);
         }
         
-        input:checked + .slider:before {
-            transform: translateX(30px);
+        input:checked + .cyber-slider::before {
+            transform: translateX(38px);
+            background: white;
         }
         
-        .calibration-item {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
+        /* ===== CHARTS ===== */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 2rem;
+        }
+        
+        /* ===== OPTIMALIZATION PANEL ===== */
+        .optimalization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .optimal-cell {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.05) 0%, rgba(157, 0, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .optimal-cell:hover {
+            transform: translateY(-3px);
+            border-color: var(--cyber-blue);
+            box-shadow: var(--glow-primary);
+        }
+        
+        .optimal-value {
+            font-family: var(--font-mono);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--cyber-blue);
+            margin: 0.5rem 0;
+            text-shadow: var(--glow-primary);
+        }
+        
+        /* ===== ACTION BUTTONS ===== */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .action-button {
+            background: var(--glass-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: var(--text-primary);
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-cyber);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        
+        .action-button:hover::before {
+            left: 0;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary);
+            border-color: var(--cyber-blue);
+        }
+        
+        .action-button.primary {
+            background: linear-gradient(135deg, var(--cyber-blue) 0%, var(--cyber-purple) 100%);
+            box-shadow: var(--glow-primary);
+        }
+        
+        .action-button.success {
+            background: linear-gradient(135deg, var(--cyber-green) 0%, var(--cyber-blue) 100%);
+            box-shadow: var(--glow-success);
+        }
+        
+        .action-button.warning {
+            background: linear-gradient(135deg, var(--cyber-yellow) 0%, var(--cyber-pink) 100%);
+        }
+        
+        /* ===== MODALS ===== */
+        .cyber-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cyber-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: var(--glass-dark);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+        
+        .cyber-modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-cyber);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .modal-close:hover {
+            color: var(--cyber-red);
+            background: rgba(255, 0, 85, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .cyber-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .cyber-input:focus {
+            outline: none;
+            border-color: var(--cyber-blue);
+            box-shadow: var(--glow-primary);
+        }
+        
+        /* ===== NOTIFICATIONS ===== */
+        .cyber-notification {
+            position: fixed;
+            top: 150px;
+            right: 2rem;
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            border-left: 4px solid var(--cyber-blue);
+            border-radius: 15px;
+            padding: 1.5rem;
+            width: 350px;
+            box-shadow: var(--shadow-glow);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .cyber-notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--gradient-cyber);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .cyber-notification.success {
+            border-left-color: var(--cyber-green);
+        }
+        
+        .cyber-notification.success .notification-icon {
+            background: linear-gradient(135deg, var(--cyber-green) 0%, var(--cyber-blue) 100%);
+        }
+        
+        .cyber-notification.error {
+            border-left-color: var(--cyber-red);
+        }
+        
+        .cyber-notification.error .notification-icon {
+            background: linear-gradient(135deg, var(--cyber-red) 0%, var(--cyber-pink) 100%);
+        }
+        
+        .cyber-notification.warning {
+            border-left-color: var(--cyber-yellow);
+        }
+        
+        .cyber-notification.warning .notification-icon {
+            background: linear-gradient(135deg, var(--cyber-yellow) 0%, var(--cyber-pink) 100%);
+        }
+        
+        /* ===== FOOTER ===== */
+        .cyber-footer {
+            background: rgba(10, 15, 30, 0.9);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 0;
+            margin-top: 5rem;
+        }
+        
+        .footer-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .calibration-info {
+        .footer-links {
             display: flex;
-            flex-direction: column;
+            gap: 2rem;
         }
         
-        .calibration-label {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .calibration-value {
-            color: var(--gray);
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-mono);
             font-size: 0.9rem;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            color: var(--gray);
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            z-index: 1000;
-            opacity: 0;
-            transform: translateX(100px);
-            transition: all 0.3s ease;
-            max-width: 350px;
-            box-shadow: var(--shadow);
-        }
-        
-        .notification.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .notification.success {
-            background: var(--success);
-        }
-        
-        .notification.error {
-            background: var(--danger);
-        }
-        
-        .notification.warning {
-            background: var(--warning);
-        }
-        
-        .notification.info {
-            background: var(--secondary);
-        }
-        
-        .gauge {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
+            transition: color 0.3s ease;
             position: relative;
         }
         
-        .gauge-circle {
-            width: 100%;
-            height: 100%;
+        .footer-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gradient-cyber);
+            transition: width 0.3s ease;
         }
         
-        .gauge-value {
-            position: absolute;
-            top: 50%;
-            left: 50%;
+        .footer-link:hover {
+            color: var(--cyber-blue);
+        }
+        
+        .footer-link:hover::after {
+            width: 100%;
+        }
+        
+        .developer-credit {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        .developer-credit a {
+            color: var(--cyber-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .developer-credit a:hover {
+            text-shadow: var(--glow-primary);
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .cyber-grid-system {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .cyber-nav {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding-top: 120px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .sensor-matrix,
+            .control-grid,
+            .optimalization-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .sensor-matrix,
+            .control-grid,
+            .optimalization-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cyber-card {
+                padding: 1.5rem;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* ===== LOADING ANIMATIONS ===== */
+        .loading-wave {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .wave-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .wave {
+            width: 10px;
+            height: 50px;
+            background: var(--gradient-cyber);
+            border-radius: 10px;
+            animation: wave 1.2s ease-in-out infinite;
+        }
+        
+        .wave:nth-child(2) { animation-delay: 0.1s; }
+        .wave:nth-child(3) { animation-delay: 0.2s; }
+        .wave:nth-child(4) { animation-delay: 0.3s; }
+        .wave:nth-child(5) { animation-delay: 0.4s; }
+        
+        @keyframes wave {
+            0%, 60%, 100% { transform: scaleY(0.4); }
+            20% { transform: scaleY(1); }
+        }
+        
+        /* ===== CUSTOM SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-mid);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-cyber);
+            border-radius: 10px;
+            border: 2px solid var(--bg-mid);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            box-shadow: var(--glow-primary);
+        }
+        
+        /* ===== 3D TERMINAL EFFECT ===== */
+        .terminal-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        /* ===== PULSE ANIMATION ===== */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes neon {
+            0% { box-shadow: 0 0 5px var(--cyber-blue), 0 0 10px var(--cyber-blue), 0 0 15px var(--cyber-blue); }
+            100% { box-shadow: 0 0 10px var(--cyber-blue), 0 0 20px var(--cyber-blue), 0 0 30px var(--cyber-blue); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-wave" id="loadingScreen">
+        <div class="wave-container">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+    </div>
+
+    <!-- Cyber Background Effects -->
+    <div class="cyber-grid"></div>
+    <div class="cyber-scanlines"></div>
+    <div class="terminal-effect" id="terminalEffect"></div>
+
+    <!-- Header -->
+    <header class="cyber-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo-glow">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="logo-text">POWER SWITCH V2</div>
+                        <div class="logo-subtitle">CYBERNETIC CONTROL PANEL</div>
+                    </div>
+                </div>
+
+                <nav class="cyber-nav">
+                    <a href="#dashboard" class="nav-item active">
+                        <i class="fas fa-tachometer-alt"></i> DASHBOARD
+                    </a>
+                    <a href="#control" class="nav-item">
+                        <i class="fas fa-gamepad"></i> CONTROL
+                    </a>
+                    <a href="#optimalization" class="nav-item">
+                        <i class="fas fa-sliders-h"></i> OPTIMALIZATION
+                    </a>
+                    <a href="#analytics" class="nav-item">
+                        <i class="fas fa-chart-network"></i> ANALYTICS
+                    </a>
+                    <a href="#settings" class="nav-item">
+                        <i class="fas fa-cogs"></i> SETTINGS
+                    </a>
+                </nav>
+
+                <div class="connection-panel">
+                    <div class="status-orb" id="statusOrb"></div>
+                    <div class="status-text" id="statusText">SYNCING...</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header animate__animated animate__fadeInUp">
+                    <h1 class="glitch-text" data-text="⚡ CYBERNETIC DASHBOARD">⚡ CYBERNETIC DASHBOARD</h1>
+                    <p class="cyber-text">REAL-TIME SYSTEM MONITORING & CONTROL INTERFACE</p>
+                </div>
+
+                <!-- System Status Grid -->
+                <div class="cyber-grid-system">
+                    <!-- System Status Card -->
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-server"></i>
+                                </div>
+                                <div>
+                                    <h3>SYSTEM STATUS</h3>
+                                    <p class="cyber-text">CORE OPERATION METRICS</p>
+                                </div>
+                            </div>
+                            <div class="status-indicator">
+                                <div class="cyber-text" id="systemStatus">ONLINE</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="status-matrix">
+                                <div class="status-row">
+                                    <span class="status-label">SYSTEM STATE</span>
+                                    <span class="status-value cyber-text" id="systemState">INITIALIZING</span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="status-label">ACTIVE SOURCE</span>
+                                    <span class="status-value cyber-text" id="activeSource">SOURCE_1</span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="status-label">UPTIME</span>
+                                    <span class="status-value cyber-text" id="systemUptime">00:00:00</span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="status-label">SWITCH COUNT</span>
+                                    <span class="status-value cyber-text" id="switchCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voltage Matrix Card -->
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <h3>VOLTAGE MATRIX</h3>
+                                    <p class="cyber-text">POWER SOURCE MONITORING</p>
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="sensor-matrix">
+                                <div class="sensor-node">
+                                    <div class="sensor-label">SOURCE 1</div>
+                                    <div class="sensor-value" id="voltage1">0.0</div>
+                                    <div class="sensor-unit">V AC</div>
+                                    <div class="sensor-status" id="v1Status">STANDBY</div>
+                                </div>
+                                <div class="sensor-node">
+                                    <div class="sensor-label">SOURCE 2</div>
+                                    <div class="sensor-value" id="voltage2">0.0</div>
+                                    <div class="sensor-unit">V AC</div>
+                                    <div class="sensor-status" id="v2Status">STANDBY</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Power Analytics Card -->
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div>
+                                    <h3>POWER ANALYTICS</h3>
+                                    <p class="cyber-text">ENERGY CONSUMPTION METRICS</p>
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-charging-station"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="sensor-matrix">
+                                <div class="sensor-node">
+                                    <div class="sensor-label">CURRENT FLOW</div>
+                                    <div class="sensor-value" id="current">0.00</div>
+                                    <div class="sensor-unit">A</div>
+                                </div>
+                                <div class="sensor-node">
+                                    <div class="sensor-label">POWER USAGE</div>
+                                    <div class="sensor-value" id="power">0.0</div>
+                                    <div class="sensor-unit">W</div>
+                                </div>
+                                <div class="sensor-node">
+                                    <div class="sensor-label">ENERGY TOTAL</div>
+                                    <div class="sensor-value" id="energy">0.000</div>
+                                    <div class="sensor-unit">kWh</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Control Section -->
+            <section id="control" class="section">
+                <h2 class="animate__animated animate__fadeInUp">🎮 CONTROL MATRIX</h2>
+                <p class="cyber-text animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                    MANUAL POWER SOURCE CONTROL INTERFACE
+                </p>
+
+                <!-- Control Panel -->
+                <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div>
+                                <h3>SOURCE SELECTION</h3>
+                                <p class="cyber-text">MANUAL CONTROL INTERFACE</p>
+                            </div>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="control-grid">
+                            <button class="cyber-button" id="btnSource1" onclick="switchSource(1)">
+                                <div class="button-icon">
+                                    <i class="fas fa-plug"></i>
+                                </div>
+                                <span>SOURCE 1</span>
+                                <small class="cyber-text">PRIMARY POWER</small>
+                            </button>
+                            <button class="cyber-button" id="btnSource2" onclick="switchSource(2)">
+                                <div class="button-icon">
+                                    <i class="fas fa-plug"></i>
+                                </div>
+                                <span>SOURCE 2</span>
+                                <small class="cyber-text">BACKUP POWER</small>
+                            </button>
+                            <button class="cyber-button danger" id="btnShutdown" onclick="switchSource(0)">
+                                <div class="button-icon">
+                                    <i class="fas fa-power-off"></i>
+                                </div>
+                                <span>SHUTDOWN</span>
+                                <small class="cyber-text">SYSTEM POWER OFF</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mode Controls -->
+                <div class="cyber-grid-system">
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div>
+                                    <h3>SYSTEM MODES</h3>
+                                    <p class="cyber-text">OPERATION CONFIGURATION</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="toggle-matrix">
+                                <div class="toggle-unit">
+                                    <div class="toggle-info">
+                                        <div class="toggle-icon">
+                                            <i class="fas fa-robot"></i>
+                                        </div>
+                                        <div class="toggle-text">
+                                            <h4>AUTO MODE</h4>
+                                            <p>Automatic source switching based on voltage levels</p>
+                                        </div>
+                                    </div>
+                                    <label class="cyber-toggle">
+                                        <input type="checkbox" id="autoModeToggle" onchange="toggleMode('auto')">
+                                        <span class="cyber-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-unit">
+                                    <div class="toggle-info">
+                                        <div class="toggle-icon">
+                                            <i class="fas fa-tools"></i>
+                                        </div>
+                                        <div class="toggle-text">
+                                            <h4>MAINTENANCE MODE</h4>
+                                            <p>Disable all power sources for maintenance</p>
+                                        </div>
+                                    </div>
+                                    <label class="cyber-toggle">
+                                        <input type="checkbox" id="maintenanceToggle" onchange="toggleMode('maintenance')">
+                                        <span class="cyber-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Switching Status -->
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div>
+                                    <h3>SWITCHING STATUS</h3>
+                                    <p class="cyber-text">TRANSITION MONITOR</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-interface">
+                                <div class="progress-header">
+                                    <span class="cyber-text">SWITCH PROGRESS</span>
+                                    <span class="cyber-text" id="switchProgressText">0%</span>
+                                </div>
+                                <div class="cyber-progress">
+                                    <div class="progress-fill" id="switchProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="status-display">
+                                    <div class="status-item">
+                                        <span class="status-label cyber-text">STATUS:</span>
+                                        <span class="status-value cyber-text" id="switchState">IDLE</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <span class="status-label cyber-text">TIME REMAINING:</span>
+                                        <span class="status-value cyber-text" id="switchTime">0s</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Optimalization Section -->
+            <section id="optimalization" class="section">
+                <h2 class="animate__animated animate__fadeInUp">🎯 SENSOR OPTIMALIZATION</h2>
+                <p class="cyber-text animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                    CALIBRATION MATRIX & SENSOR TUNING
+                </p>
+
+                <!-- Current Optimalization -->
+                <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-sliders-h"></i>
+                            </div>
+                            <div>
+                                <h3>CALIBRATION MATRIX</h3>
+                                <p class="cyber-text">CURRENT SENSOR PARAMETERS</p>
+                            </div>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="optimalization-grid">
+                            <div class="optimal-cell">
+                                <div class="sensor-label">ZERO POINT V1</div>
+                                <div class="optimal-value" id="zeroV1">2048</div>
+                                <div class="sensor-status" id="zeroV1Status">CALIBRATED</div>
+                            </div>
+                            <div class="optimal-cell">
+                                <div class="sensor-label">ZERO POINT V2</div>
+                                <div class="optimal-value" id="zeroV2">2048</div>
+                                <div class="sensor-status" id="zeroV2Status">CALIBRATED</div>
+                            </div>
+                            <div class="optimal-cell">
+                                <div class="sensor-label">ZERO POINT I</div>
+                                <div class="optimal-value" id="zeroI">2048</div>
+                                <div class="sensor-status" id="zeroIStatus">CALIBRATED</div>
+                            </div>
+                            <div class="optimal-cell">
+                                <div class="sensor-label">FACTOR V1</div>
+                                <div class="optimal-value" id="factorV1">1.0000</div>
+                                <div class="sensor-status" id="factorV1Status">OPTIMAL</div>
+                            </div>
+                            <div class="optimal-cell">
+                                <div class="sensor-label">FACTOR V2</div>
+                                <div class="optimal-value" id="factorV2">1.0000</div>
+                                <div class="sensor-status" id="factorV2Status">OPTIMAL</div>
+                            </div>
+                            <div class="optimal-cell">
+                                <div class="sensor-label">FACTOR I</div>
+                                <div class="optimal-value" id="factorI">1.0000</div>
+                                <div class="sensor-status" id="factorIStatus">OPTIMAL</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optimalization Tools -->
+                <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <div>
+                                <h3>OPTIMALIZATION TOOLS</h3>
+                                <p class="cyber-text">CALIBRATION UTILITIES</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="action-grid">
+                            <button class="action-button primary" onclick="performAutoOptimalization()">
+                                <i class="fas fa-robot"></i>
+                                <span>AUTO OPTIMALIZATION</span>
+                            </button>
+                            <button class="action-button success" onclick="openManualOptModal()">
+                                <i class="fas fa-user-cog"></i>
+                                <span>MANUAL CALIBRATION</span>
+                            </button>
+                            <button class="action-button" onclick="recalculateZeroPoints()">
+                                <i class="fas fa-redo"></i>
+                                <span>RECALCULATE ZERO</span>
+                            </button>
+                            <button class="action-button warning" onclick="saveOptimalization()">
+                                <i class="fas fa-save"></i>
+                                <span>SAVE TO FLASH</span>
+                            </button>
+                            <button class="action-button" onclick="backupOptimalization()">
+                                <i class="fas fa-download"></i>
+                                <span>BACKUP DATA</span>
+                            </button>
+                            <button class="action-button danger" onclick="resetOptimalization()">
+                                <i class="fas fa-trash"></i>
+                                <span>RESET ALL</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="section">
+                <h2 class="animate__animated animate__fadeInUp">📈 DATA ANALYTICS</h2>
+                <p class="cyber-text animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                    HISTORICAL DATA & PERFORMANCE METRICS
+                </p>
+
+                <!-- Charts Grid -->
+                <div class="cyber-grid-system">
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <h3>VOLTAGE TREND</h3>
+                                    <p class="cyber-text">REAL-TIME MONITORING</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="voltageChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-chart-area"></i>
+                                </div>
+                                <div>
+                                    <h3>POWER CONSUMPTION</h3>
+                                    <p class="cyber-text">ENERGY USAGE TREND</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="powerChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div>
+                                <h3>SYSTEM STATISTICS</h3>
+                                <p class="cyber-text">PERFORMANCE METRICS</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-cell">
+                                <div class="stat-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value cyber-text" id="avgVoltage">0.0</div>
+                                    <div class="stat-label">AVG VOLTAGE</div>
+                                </div>
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-icon">
+                                    <i class="fas fa-charging-station"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value cyber-text" id="maxCurrent">0.00</div>
+                                    <div class="stat-label">MAX CURRENT</div>
+                                </div>
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-icon">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value cyber-text" id="totalEnergy">0.000</div>
+                                    <div class="stat-label">TOTAL ENERGY</div>
+                                </div>
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value cyber-text" id="totalSwitches">0</div>
+                                    <div class="stat-label">TOTAL SWITCHES</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="section">
+                <h2 class="animate__animated animate__fadeInUp">⚙️ SYSTEM SETTINGS</h2>
+                <p class="cyber-text animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                    CONFIGURATION PARAMETERS & NETWORK SETTINGS
+                </p>
+
+                <div class="cyber-grid-system">
+                    <!-- Network Settings -->
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-wifi"></i>
+                                </div>
+                                <div>
+                                    <h3>NETWORK</h3>
+                                    <p class="cyber-text">CONNECTION STATUS</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="settings-matrix">
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">WIFI SIGNAL</span>
+                                    <span class="setting-value cyber-text" id="wifiSignal">- dBm</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">IP ADDRESS</span>
+                                    <span class="setting-value cyber-text" id="ipAddress">0.0.0.0</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">MAC ADDRESS</span>
+                                    <span class="setting-value cyber-text" id="macAddress">00:00:00:00:00:00</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">CONNECTION TIME</span>
+                                    <span class="setting-value cyber-text" id="connectionTime">00:00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Parameters -->
+                    <div class="cyber-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div>
+                                    <h3>PARAMETERS</h3>
+                                    <p class="cyber-text">SYSTEM CONFIGURATION</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="settings-matrix">
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">AUTO SWITCH VOLTAGE</span>
+                                    <span class="setting-value cyber-text" id="autoSwitchVoltage">180.0 V</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">AUTO RESTORE VOLTAGE</span>
+                                    <span class="setting-value cyber-text" id="autoRestoreVoltage">190.0 V</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">SWITCH DELAY</span>
+                                    <span class="setting-value cyber-text" id="switchDelay">2000 ms</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">MAX VOLTAGE</span>
+                                    <span class="setting-value cyber-text" id="maxVoltage">500.0 V</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-label cyber-text">MAX CURRENT</span>
+                                    <span class="setting-value cyber-text" id="maxCurrentLimit">25.0 A</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="cyber-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-container">
+                        <div class="logo-glow" style="width: 50px; height: 50px;">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div>
+                            <div class="logo-text">POWER SWITCH V2</div>
+                            <div class="logo-subtitle">CYBERNETIC EDITION</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="#dashboard" class="footer-link">DASHBOARD</a>
+                    <a href="#control" class="footer-link">CONTROL</a>
+                    <a href="#optimalization" class="footer-link">OPTIMALIZATION</a>
+                    <a href="#analytics" class="footer-link">ANALYTICS</a>
+                    <a href="#settings" class="footer-link">SETTINGS</a>
+                </div>
+                <div class="footer-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-microchip cyber-text"></i>
+                        <span class="cyber-text">ESP32</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-code-branch cyber-text"></i>
+                        <span class="cyber-text">v2.0</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-bolt cyber-text"></i>
+                        <span class="cyber-text">POWERED</span>
+                    </div>
+                </div>
+            </div>
+            <div class="developer-credit">
+                DESIGNED WITH <i class="fas fa-heart" style="color: #ff0055;"></i> BY 
+                <a href="https://instagram.com/mh.alliwa" target="_blank" class="cyber-text">@mh.alliwa</a> 
+                | CYBERNETIC CONTROL INTERFACE
+            </div>
+            <div class="footer-bottom cyber-text">
+                SYSTEM UPTIME: <span id="footerUptime">00:00:00</span> | 
+                LAST UPDATE: <span id="lastUpdate">--:--:--</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Manual Optimalization Modal -->
+    <div class="cyber-modal" id="manualOptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-cog"></i> MANUAL OPTIMALIZATION</h3>
+                <button class="modal-close" onclick="closeModal('manualOptModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">SELECT SOURCE</label>
+                    <select class="cyber-input" id="optSourceSelect">
+                        <option value="1">SOURCE 1 (V1)</option>
+                        <option value="2">SOURCE 2 (V2)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ACTUAL VOLTAGE (V)</label>
+                    <input type="number" class="cyber-input" id="optVoltageInput" 
+                           placeholder="ENTER ACTUAL VOLTAGE (E.G., 220.5)" 
+                           min="50" max="300" step="0.1">
+                    <small class="cyber-text">MEASURE WITH MULTIMETER AND ENTER EXACT VALUE</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CURRENT CALIBRATION FACTOR</label>
+                    <div class="cyber-input" id="currentFactor">1.0000</div>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="action-button primary" onclick="startManualOptimalization()">
+                    <i class="fas fa-play"></i>
+                    <span>START OPTIMALIZATION</span>
+                </button>
+                <button class="action-button" onclick="closeModal('manualOptModal')">
+                    <i class="fas fa-times"></i>
+                    <span>CANCEL</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="cyber-modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> CONFIRMATION</h3>
+                <button class="modal-close" onclick="closeModal('confirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="cyber-text" id="confirmMessage">ARE YOU SURE YOU WANT TO PERFORM THIS ACTION?</p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="action-button danger" id="confirmAction">
+                    <i class="fas fa-check"></i>
+                    <span>CONFIRM</span>
+                </button>
+                <button class="action-button" onclick="closeModal('confirmModal')">
+                    <i class="fas fa-times"></i>
+                    <span>CANCEL</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="cyber-notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title cyber-text" id="notificationTitle">NOTIFICATION</div>
+            <div class="notification-message" id="notificationMessage">SYSTEM IS RUNNING NORMALLY</div>
+        </div>
+        <button class="modal-close" onclick="hideNotification()">&times;</button>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // ===== GLOBAL VARIABLES =====
+        let socket;
+        let voltageChartInstance;
+        let powerChartInstance;
+        let voltageData = [];
+        let powerData = [];
+        let timeData = [];
+        let maxDataPoints = 20;
+        let systemUptime = 0;
+        let switchTimer = null;
+        let switchStartTime = 0;
+        let switchDuration = 0;
+        let particleSystem;
+        let isInitialized = false;
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize loading animation
+            initLoadingAnimation();
+            
+            // Initialize all systems
+            await Promise.all([
+                initWebSocket(),
+                initCharts(),
+                initParticles(),
+                initAnimations(),
+                initEventListeners()
+            ]);
+            
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                showNotification('SYSTEM INITIALIZED', 'success');
+                isInitialized = true;
+            }, 2000);
+        });
+
+        // ===== LOADING ANIMATION =====
+        function initLoadingAnimation() {
+            const waves = document.querySelectorAll('.wave');
+            waves.forEach((wave, index) => {
+                wave.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // ===== WEB SOCKET =====
+        function initWebSocket() {
+            return new Promise((resolve) => {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/ws`;
+                
+                socket = new WebSocket(wsUrl);
+                
+                socket.onopen = function() {
+                    console.log('🔌 WEBSOCKET CONNECTED');
+                    showNotification('CONNECTION ESTABLISHED', 'success');
+                    updateConnectionStatus(true);
+                    resolve();
+                    
+                    // Request initial data
+                    sendMessage({ command: 'get_status' });
+                };
+                
+                socket.onclose = function() {
+                    console.log('🔌 WEBSOCKET DISCONNECTED');
+                    showNotification('CONNECTION LOST', 'error');
+                    updateConnectionStatus(false);
+                    
+                    // Try to reconnect
+                    setTimeout(initWebSocket, 3000);
+                };
+                
+                socket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        processWebSocketMessage(data);
+                    } catch (error) {
+                        console.error('❌ ERROR PARSING MESSAGE:', error);
+                    }
+                };
+                
+                socket.onerror = function(error) {
+                    console.error('❌ WEBSOCKET ERROR:', error);
+                    showNotification('CONNECTION ERROR', 'error');
+                };
+            });
+        }
+
+        // ===== PROCESS MESSAGES =====
+        function processWebSocketMessage(data) {
+            // System Status
+            if (data.system) {
+                updateSystemStatus(data.system);
+            }
+            
+            // Sensor Data
+            if (data.sensors) {
+                updateSensorData(data.sensors);
+            }
+            
+            // Optimalization Data
+            if (data.optimalization) {
+                updateOptimalizationData(data.optimalization);
+            }
+            
+            // Network Data
+            if (data.network) {
+                updateNetworkData(data.network);
+            }
+            
+            // Special Messages
+            if (data.type) {
+                handleSpecialMessage(data);
+            }
+        }
+
+        // ===== UPDATE FUNCTIONS =====
+        function updateSystemStatus(system) {
+            if (system.state !== undefined) {
+                updateSystemState(system.state);
+            }
+            if (system.uptime !== undefined) {
+                systemUptime = system.uptime;
+                updateUptimeDisplay();
+            }
+            if (system.switchCount !== undefined) {
+                document.getElementById('switchCount').textContent = system.switchCount;
+            }
+        }
+
+        function updateSensorData(sensors) {
+            // Update voltage
+            if (sensors.voltage1 !== undefined) {
+                updateValueWithAnimation('voltage1', sensors.voltage1.toFixed(1));
+                updateVoltageStatus('v1Status', sensors.voltage1);
+            }
+            if (sensors.voltage2 !== undefined) {
+                updateValueWithAnimation('voltage2', sensors.voltage2.toFixed(1));
+                updateVoltageStatus('v2Status', sensors.voltage2);
+            }
+            
+            // Update current and power
+            if (sensors.current !== undefined) {
+                updateValueWithAnimation('current', sensors.current.toFixed(2));
+            }
+            if (sensors.power !== undefined) {
+                updateValueWithAnimation('power', sensors.power.toFixed(1));
+                updateChartData(sensors.voltage1 || 0, sensors.power);
+            }
+            if (sensors.energy !== undefined) {
+                updateValueWithAnimation('energy', sensors.energy.toFixed(3));
+            }
+            
+            // Update statistics
+            if (sensors.avgVoltage !== undefined) {
+                document.getElementById('avgVoltage').textContent = sensors.avgVoltage.toFixed(1);
+            }
+            if (sensors.maxCurrent !== undefined) {
+                document.getElementById('maxCurrent').textContent = sensors.maxCurrent.toFixed(2);
+            }
+        }
+
+        function updateOptimalizationData(opt) {
+            const elements = [
+                'zeroV1', 'zeroV2', 'zeroI',
+                'factorV1', 'factorV2', 'factorI'
+            ];
+            
+            elements.forEach(element => {
+                if (opt[element] !== undefined) {
+                    const el = document.getElementById(element);
+                    if (el) {
+                        if (element.startsWith('factor')) {
+                            el.textContent = opt[element].toFixed(4);
+                        } else {
+                            el.textContent = opt[element];
+                        }
+                        
+                        // Add animation
+                        el.style.transform = 'scale(1.2)';
+                        setTimeout(() => {
+                            el.style.transform = 'scale(1)';
+                        }, 300);
+                    }
+                }
+            });
+        }
+
+        function updateNetworkData(network) {
+            if (network.wifiSignal !== undefined) {
+                document.getElementById('wifiSignal').textContent = network.wifiSignal + ' dBm';
+            }
+            if (network.ip !== undefined) {
+                document.getElementById('ipAddress').textContent = network.ip;
+            }
+            if (network.mac !== undefined) {
+                document.getElementById('macAddress').textContent = network.mac;
+            }
+        }
+
+        // ===== SPECIAL MESSAGE HANDLER =====
+        function handleSpecialMessage(data) {
+            switch(data.type) {
+                case 'state_transition':
+                    startSwitchAnimation(data.delay || 2000);
+                    showNotification('SWITCHING POWER SOURCE...', 'info');
+                    break;
+                    
+                case 'state_changed':
+                    updateSystemState(data.state);
+                    showNotification('POWER SOURCE CHANGED', 'success');
+                    break;
+                    
+                case 'optimalization_start':
+                    showNotification('STARTING OPTIMALIZATION...', 'info');
+                    break;
+                    
+                case 'optimalization_progress':
+                    updateOptimalizationProgress(data.progress);
+                    break;
+                    
+                case 'optimalization_complete':
+                    showNotification('OPTIMALIZATION COMPLETE!', 'success');
+                    break;
+                    
+                case 'optimalization_saved':
+                    showNotification('SETTINGS SAVED TO FLASH', 'success');
+                    break;
+                    
+                case 'mode_changed':
+                    showNotification(`${data.mode.toUpperCase()} MODE ${data.enabled ? 'ENABLED' : 'DISABLED'}`, 'info');
+                    break;
+                    
+                case 'emergency_shutdown':
+                    showNotification(`EMERGENCY: ${data.reason}`, 'error');
+                    break;
+                    
+                case 'warning':
+                case 'error':
+                    showNotification(data.message, data.type);
+                    break;
+            }
+        }
+
+        // ===== UI UPDATE FUNCTIONS =====
+        function updateValueWithAnimation(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                // Add animation
+                element.style.transform = 'scale(1.2)';
+                element.style.color = '#00ff9d';
+                
+                // Update value
+                element.textContent = value;
+                
+                // Reset animation
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                    element.style.color = '';
+                }, 300);
+            }
+        }
+
+        function updateSystemState(state) {
+            const stateText = getStateText(state);
+            document.getElementById('systemState').textContent = stateText;
+            
+            // Update control buttons
+            const buttons = ['btnSource1', 'btnSource2', 'btnShutdown'];
+            buttons.forEach(btn => document.getElementById(btn).classList.remove('active'));
+            
+            if (state === 1) {
+                document.getElementById('btnSource1').classList.add('active');
+                document.getElementById('activeSource').textContent = 'SOURCE_1';
+            } else if (state === 2) {
+                document.getElementById('btnSource2').classList.add('active');
+                document.getElementById('activeSource').textContent = 'SOURCE_2';
+            } else if (state === 0) {
+                document.getElementById('btnShutdown').classList.add('active');
+                document.getElementById('activeSource').textContent = 'NONE';
+            }
+        }
+
+        function getStateText(state) {
+            const states = {
+                0: '🟢 SYSTEM_OFF',
+                1: '⚡ SOURCE_1_ACTIVE',
+                2: '⚡ SOURCE_2_ACTIVE',
+                3: '🔄 SWITCHING',
+                4: '🔴 SYSTEM_FAULT'
+            };
+            return states[state] || '⚫ UNKNOWN';
+        }
+
+        function updateVoltageStatus(elementId, voltage) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let status, color;
+            if (voltage === 0) {
+                status = 'NO_POWER';
+                color = '#64748b';
+            } else if (voltage < 180) {
+                status = 'LOW_VOLTAGE';
+                color = '#ef4444';
+            } else if (voltage > 250) {
+                status = 'HIGH_VOLTAGE';
+                color = '#f59e0b';
+            } else {
+                status = 'NORMAL';
+                color = '#00ff9d';
+            }
+            
+            element.textContent = status;
+            element.style.color = color;
+            element.style.textShadow = `0 0 10px ${color}`;
+        }
+
+        function updateConnectionStatus(connected) {
+            const orb = document.getElementById('statusOrb');
+            const text = document.getElementById('statusText');
+            
+            if (connected) {
+                orb.className = 'status-orb connected';
+                orb.style.background = '#00ff9d';
+                text.textContent = 'CONNECTED';
+                text.style.color = '#00ff9d';
+            } else {
+                orb.className = 'status-orb';
+                orb.style.background = '#ff0055';
+                text.textContent = 'DISCONNECTED';
+                text.style.color = '#ff0055';
+            }
+        }
+
+        function updateUptimeDisplay() {
+            const hours = Math.floor(systemUptime / 3600);
+            const minutes = Math.floor((systemUptime % 3600) / 60);
+            const seconds = systemUptime % 60;
+            
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('systemUptime').textContent = timeString;
+            document.getElementById('footerUptime').textContent = timeString;
+            
+            // Update connection time
+            document.getElementById('connectionTime').textContent = timeString;
+        }
+
+        // ===== CONTROL FUNCTIONS =====
+        function switchSource(source) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                showNotification('NOT CONNECTED TO SYSTEM', 'error');
+                return;
+            }
+            
+            sendMessage({
+                command: 'switch_source',
+                value: source.toString()
+            });
+        }
+
+        function toggleMode(mode) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) return;
+            
+            sendMessage({
+                command: 'toggle_mode',
+                value: mode
+            });
+        }
+
+        function performAutoOptimalization() {
+            showConfirmModal(
+                'AUTO OPTIMALIZATION',
+                'THIS WILL PERFORM AUTOMATIC OPTIMALIZATION. ENSURE NO VOLTAGE IS CONNECTED AND ALL RELAYS ARE OFF. CONTINUE?',
+                () => {
+                    sendMessage({
+                        command: 'optimalization',
+                        value: 'auto'
+                    });
+                }
+            );
+        }
+
+        function openManualOptModal() {
+            document.getElementById('manualOptModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function startManualOptimalization() {
+            const source = document.getElementById('optSourceSelect').value;
+            const voltage = parseFloat(document.getElementById('optVoltageInput').value);
+            
+            if (!voltage || voltage < 50 || voltage > 300) {
+                showNotification('PLEASE ENTER VALID VOLTAGE (50-300V)', 'error');
+                return;
+            }
+            
+            sendMessage({
+                command: 'manual_optimal',
+                source: parseInt(source),
+                voltage: voltage
+            });
+            
+            closeModal('manualOptModal');
+            showNotification('MANUAL OPTIMALIZATION STARTED...', 'info');
+        }
+
+        function recalculateZeroPoints() {
+            showConfirmModal(
+                'RECALCULATE ZERO POINTS',
+                'THIS WILL RECALCULATE ZERO POINTS FOR ALL SENSORS. ENSURE NO VOLTAGE IS CONNECTED. CONTINUE?',
+                () => {
+                    sendMessage({
+                        command: 'zero_point_recalc',
+                        value: 'all'
+                    });
+                }
+            );
+        }
+
+        function saveOptimalization() {
+            sendMessage({
+                command: 'optimalization',
+                value: 'save'
+            });
+        }
+
+        function backupOptimalization() {
+            showNotification('CREATING BACKUP OF OPTIMALIZATION DATA...', 'info');
+            // In real implementation, trigger download
+            setTimeout(() => {
+                showNotification('BACKUP CREATED SUCCESSFULLY', 'success');
+            }, 1500);
+        }
+
+        function resetOptimalization() {
+            showConfirmModal(
+                'RESET OPTIMALIZATION',
+                '⚠️ WARNING: THIS WILL RESET ALL OPTIMALIZATION DATA TO DEFAULT VALUES! THIS ACTION CANNOT BE UNDONE. CONTINUE?',
+                () => {
+                    sendMessage({
+                        command: 'optimalization',
+                        value: 'reset'
+                    });
+                },
+                'danger'
+            );
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showConfirmModal(title, message, confirmAction, type = 'warning') {
+            const modal = document.getElementById('confirmModal');
+            const messageEl = document.getElementById('confirmMessage');
+            const actionBtn = document.getElementById('confirmAction');
+            
+            messageEl.textContent = message;
+            actionBtn.className = `action-button ${type}`;
+            actionBtn.onclick = function() {
+                confirmAction();
+                closeModal('confirmModal');
+            };
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ===== NOTIFICATION FUNCTIONS =====
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const title = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            const icon = notification.querySelector('.notification-icon i');
+            
+            // Set type
+            notification.className = `cyber-notification ${type} show`;
+            
+            // Set icon and title
+            switch(type) {
+                case 'success':
+                    icon.className = 'fas fa-check-circle';
+                    title.textContent = 'SUCCESS';
+                    break;
+                case 'error':
+                    icon.className = 'fas fa-exclamation-circle';
+                    title.textContent = 'ERROR';
+                    break;
+                case 'warning':
+                    icon.className = 'fas fa-exclamation-triangle';
+                    title.textContent = 'WARNING';
+                    break;
+                default:
+                    icon.className = 'fas fa-info-circle';
+                    title.textContent = 'INFO';
+            }
+            
+            messageEl.textContent = message;
+            
+            // Auto hide
+            setTimeout(hideNotification, 5000);
+        }
+
+        function hideNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        // ===== CHART FUNCTIONS =====
+        function initCharts() {
+            const voltageCtx = document.getElementById('voltageChart').getContext('2d');
+            const powerCtx = document.getElementById('powerChart').getContext('2d');
+            
+            // Voltage chart
+            voltageChartInstance = new Chart(voltageCtx, {
+                type: 'line',
+                data: {
+                    labels: timeData,
+                    datasets: [{
+                        label: 'VOLTAGE',
+                        data: voltageData,
+                        borderColor: '#00f3ff',
+                        backgroundColor: 'rgba(0, 243, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#00f3ff',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: getChartOptions('VOLTAGE (V)', '#00f3ff')
+            });
+            
+            // Power chart
+            powerChartInstance = new Chart(powerCtx, {
+                type: 'line',
+                data: {
+                    labels: timeData,
+                    datasets: [{
+                        label: 'POWER',
+                        data: powerData,
+                        borderColor: '#00ff9d',
+                        backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#00ff9d',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: getChartOptions('POWER (W)', '#00ff9d')
+            });
+        }
+
+        function getChartOptions(title, color) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#a0aec0',
+                            font: {
+                                family: 'Orbitron',
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(10, 15, 30, 0.9)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: color,
+                        borderWidth: 1,
+                        titleFont: {
+                            family: 'Orbitron'
+                        },
+                        bodyFont: {
+                            family: 'JetBrains Mono'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: '#4a5568',
+                            font: {
+                                family: 'JetBrains Mono',
+                                size: 10
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: '#4a5568',
+                            font: {
+                                family: 'JetBrains Mono',
+                                size: 10
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: title,
+                            color: color,
+                            font: {
+                                family: 'Orbitron',
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        function updateChartData(voltage, power) {
+            const now = new Date();
+            const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            voltageData.push(voltage);
+            powerData.push(power);
+            timeData.push(time);
+            
+            if (voltageData.length > maxDataPoints) {
+                voltageData.shift();
+                powerData.shift();
+                timeData.shift();
+            }
+            
+            if (voltageChartInstance) {
+                voltageChartInstance.data.labels = timeData;
+                voltageChartInstance.data.datasets[0].data = voltageData;
+                voltageChartInstance.update('none');
+            }
+            
+            if (powerChartInstance) {
+                powerChartInstance.data.labels = timeData;
+                powerChartInstance.data.datasets[0].data = powerData;
+                powerChartInstance.update('none');
+            }
+        }
+
+        // ===== SWITCH ANIMATION =====
+        function startSwitchAnimation(duration) {
+            switchStartTime = Date.now();
+            switchDuration = duration;
+            
+            document.getElementById('switchState').textContent = 'SWITCHING...';
+            document.getElementById('switchState').style.color = '#f59e0b';
+            
+            if (switchTimer) clearInterval(switchTimer);
+            switchTimer = setInterval(updateSwitchAnimation, 100);
+        }
+
+        function updateSwitchAnimation() {
+            const elapsed = Date.now() - switchStartTime;
+            const progress = Math.min((elapsed / switchDuration) * 100, 100);
+            
+            const progressBar = document.getElementById('switchProgress');
+            const progressText = document.getElementById('switchProgressText');
+            
+            progressBar.style.width = progress + '%';
+            progressBar.style.background = 'linear-gradient(90deg, #00f3ff, #9d00ff)';
+            progressBar.style.boxShadow = '0 0 20px rgba(0, 243, 255, 0.5)';
+            progressText.textContent = Math.round(progress) + '%';
+            
+            const remaining = Math.max(0, (switchDuration - elapsed) / 1000);
+            document.getElementById('switchTime').textContent = remaining.toFixed(1) + 's';
+            
+            if (progress >= 100) {
+                clearInterval(switchTimer);
+                document.getElementById('switchState').textContent = 'COMPLETE';
+                document.getElementById('switchState').style.color = '#00ff9d';
+                
+                setTimeout(() => {
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '0%';
+                    document.getElementById('switchState').textContent = 'IDLE';
+                    document.getElementById('switchState').style.color = '#a0aec0';
+                }, 2000);
+            }
+        }
+
+        // ===== OPTIMALIZATION PROGRESS =====
+        function updateOptimalizationProgress(progress) {
+            showNotification(`OPTIMALIZATION PROGRESS: ${progress}%`, 'info');
+        }
+
+        // ===== PARTICLE SYSTEM =====
+        function initParticles() {
+            particlesJS('terminalEffect', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#00f3ff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.3, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#00f3ff",
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" }
+                    }
+                }
+            });
+        }
+
+        // ===== ANIMATIONS =====
+        function initAnimations() {
+            // Initialize GSAP animations
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Animate cards on scroll
+            gsap.utils.toArray('.cyber-card').forEach(card => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power3.out"
+                });
+            });
+            
+            // Floating animation for logo
+            gsap.to('.logo-glow', {
+                y: 10,
+                duration: 2,
+                repeat: -1,
+                yoyo: true,
+                ease: "power1.inOut"
+            });
+        }
+
+        // ===== EVENT LISTENERS =====
+        function initEventListeners() {
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Update active nav
+                        document.querySelectorAll('.nav-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    }
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey) {
+                    switch(e.key) {
+                        case '1':
+                            switchSource(1);
+                            break;
+                        case '2':
+                            switchSource(2);
+                            break;
+                        case '0':
+                            switchSource(0);
+                            break;
+                        case 'r':
+                            if (socket && socket.readyState === WebSocket.OPEN) {
+                                sendMessage({ command: 'refresh' });
+                            }
+                            break;
+                        case 'o':
+                            performAutoOptimalization();
+                            break;
+                    }
+                }
+            });
+            
+            // Update last update time
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = 
+                    `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            }, 1000);
+            
+            // Update uptime
+            setInterval(() => {
+                systemUptime++;
+                updateUptimeDisplay();
+            }, 1000);
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function sendMessage(message) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+            }
+        }
+
+        // ===== ERROR HANDLING =====
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('❌ ERROR:', msg, '\nURL:', url, '\nLine:', lineNo, '\nColumn:', columnNo, '\nError:', error);
+            showNotification('APPLICATION ERROR OCCURRED', 'error');
+            return false;
+        };
+
+        // Handle visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && socket && socket.readyState === WebSocket.OPEN) {
+                sendMessage({ command: 'refresh' });
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
             transform: translate(-50%, -50%);
             font-size: 2.5rem;
             font-weight: 700;
