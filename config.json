@@ -1,0 +1,32 @@
+{
+  "version": "2.0",
+  "name": "Power Switch Control System",
+  "description": "Control interface for ESP32 Power Switch",
+  "default_ip": "10.191.170.230",
+  "default_port": 80,
+  "features": {
+    "websocket": true,
+    "optimalization": true,
+    "telegram_integration": true,
+    "web_control": true,
+    "data_logging": true
+  },
+  "sensors": {
+    "voltage": {
+      "range": "0-300V",
+      "accuracy": "±2%",
+      "deadband": "8V"
+    },
+    "current": {
+      "range": "0-25A",
+      "accuracy": "±3%",
+      "deadband": "0.02A"
+    }
+  },
+  "auto_mode": {
+    "switch_voltage": 180,
+    "restore_voltage": 190,
+    "delay_normal": 2000,
+    "delay_auto": 5000
+  }
+}
